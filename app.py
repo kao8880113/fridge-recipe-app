@@ -12,6 +12,7 @@ st.title("冷蔵庫レシピ提案アプリ")
 st.write("冷蔵庫の中身を撮影してアップロードすると、AIがレシピを提案します。")
 
 uploaded_file = st.file_uploader("冷蔵庫の写真をアップロード", type=["jpg", "jpeg", "png"])
+extra_ingredients = st.text_area("その他の食材（あれば入力、カンマ区切り）")
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
@@ -29,7 +30,12 @@ if uploaded_file is not None:
             st.write(ingredients)
 
         with st.spinner("レシピを考え中..."):
-            recipe_prompt = "以下の食材を使って作れる、簡単で時短なレシピを2つ提案してください。主婦や一人暮らしの人向けに、分かりやすく書いてください。食材: " + ingredients
+            if extra_ingredients.strip():
+                all_ingredients = ingredients + "、" + extra_ingredients
+            else:
+                all_ingredients = ingredients
+
+            recipe_prompt = "以下の食材を使って作れる、簡単で時短なレシピを2つ提案してください。主婦や一人暮らしの人向けに、分かりやすく書いてください。食材: " + all_ingredients
 
             recipe_response = model.generate_content(recipe_prompt)
 
